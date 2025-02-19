@@ -1,0 +1,223 @@
+\documentclass[twocolumn]{article}
+
+\title{Event-Driven Programming}
+\author{Matteo Mariottini}
+\date{}
+
+\usepackage{lipsum}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage[margin=2cm]{geometry} % Imposta i margini a 2cm su tutti i lati
+
+\lstdefinestyle{smallcode}{
+    basicstyle=\small\ttfamily,
+    columns=fullflexible,
+    keepspaces=true,
+    xleftmargin=0.5em,
+    xrightmargin=0.5em,
+}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+          
+Programming paradigms are crucial in understanding and mastering the world of computer science.  
+This article will deepen event-driven programming (EDP), a fundamental paradigm where program execution is determined by external events.  
+It will explore the key concepts, implementation across various domains, and the advantages and challenges associated with EDP.  
+Starting by defining events and examining their role as signals of significant occurrences within systems, then it will delve into the architecture of event-driven systems, involving producers, brokers and consumers, along with the roles of event listeners and handlers within the event loop mechanism.  
+After that, the application of EDP in web development, IoT, video game development and AI will be illustrated, followed by an outline of the advantages and challenges of EDP.  
+This overview underscores the relevance of EDP in modern software engineering, offering insights for developers navigating event-driven architectures.
+
+\end{abstract}
+
+\section{Introduction}
+\label{sec:introduction}
+          
+A programming paradigm is a method or style of programming that defines a set of principles, techniques, and patterns for structuring code to solve problems on a computer.
+By considering different ways to structure code, it is possible to improve the efficiency and readability of the programs. \cite{studysmarterProgrammingParadigms}
+Event-driven programming (EDP) is a programming paradigm where external events determine the flow of program execution.
+These events come in different shapes: user actions (e.g., button clicks, keyboard inputs), system events, messages from other programs, sensor outputs, etc. \cite{quixWhatEventdriven}
+
+\section{Key concepts}
+\label{sec:keyConcepts}
+
+Before delving into the complexity of EDP, it is important to explore the key concepts that define the landscape of event-driven programming.
+
+\subsection{Events}
+
+An event refers to a significant occurrence or change in state within a system or application. \cite{quixWhatEventdriven} 
+It is a signal or notification that something has happened. Events can be triggered by user actions, system actions, or other parts of the program. \cite{EventdrivenProgramming}  
+In simpler words, an event records that something has happened.  
+Here are some common examples of events:
+
+\begin{itemize}
+     \item A user clicks a button in the UI.
+     \item Someone makes an online payment.
+     \item A user sends a chat message.
+     \item A smartwatch detects an irregular heartbeat.
+     \item A record is inserted, updated, or deleted in a database.
+     \item An application is starting or shutting down.
+\end{itemize}
+
+Here’s an event that signifies a temperature alert was triggered by a sensor installed in a greenhouse:
+          
+\begin{lstlisting}[style=smallcode]
+{
+  "eventId":"e5f6-9101-12ij-klmn-opqr-stuv",
+  "eventType":"TemperatureAlert",
+  "timestamp":"2024-04-25T08:45:00Z",
+  "source":"TemperatureSensor",
+  "sensorLocation":"Greenhouse Section A",
+  "version":"v2.0",
+  "data": {
+    "sensorId":"TS-123456",
+    "temperature":32.8,
+    "threshold":30.0,
+    "unit":"C",
+    "difference":2.8
+  },
+  "metadata": {
+    "model":"TempGuardian 2000",
+    "calibrationDate":"2024-01-10"
+  },
+  "systemMessage":"Temperature exceeds the 
+                   acceptable threshold. 
+                   Activate cooling system. 
+                   Inspection required."
+}
+\end{lstlisting}
+
+In this example:
+
+\begin{itemize}
+     \item \texttt{eventID} is the identifier specific to this temperature recording
+     \item \texttt{eventType} specifies the type of event
+     \item \texttt{timestamp} indicates the exact date and time when the event occurred
+     \item \texttt{source} and \texttt{sensorLocation} indicate the origin of the event
+     \item \texttt{data} contains readings from the sensor and other relevant metrics
+     \item \texttt{metadata} provides additional information about the sensor
+     \item \texttt{systemMessage} is a huma-readable alert or notice about the event
+\end{itemize}
+
+Collecting such events enables the company to monitor its temperature system in real time and detect issues as soon as they occur. This way, the staff can quickly react and inspect the issue to adopt the appropriate course of action.
+
+\subsection{Producers, broker and consumers}
+
+A producer is the source of events in a system. It generates events to signify that something of interest has occurred.  
+A consumer listens for events generated by producers and gets notifications when they come. \cite{quixWhatEventdriven}
+The broker is responsible for coordinating sending events to the consumers. It is optional when you have a single producer and a single consumer in direct connection with each other. In this case, the producer sends the events to the consumer. \cite{adservioEventDrivenArchitecture}
+It’s also worth mentioning that, depending on the use case, an event producer can also be a consumer. Think, for example, of chat apps: if you send a chat message (an event), you are the producer; on the other hand, if you receive a chat message, you are the event consumer. \cite{quixWhatEventdriven}
+
+\begin{center}
+     \includegraphics[width=\linewidth]{img/producer-broker-consumer.jpg}
+\end{center}
+
+\subsection{Event listeners, event handlers and event loop}
+
+An event listener is a procedure or function in a computer program that waits for an event to occur.  
+An event handler is the actual code that gets executed when triggered by a specific event. They can be categorized as synchronous if they execute the code immediately when an event occur, or asynchronous if they allow other tasks to continue executing while the code is being processed. \cite{studysmarterEventDriven}
+These two terms are often used interchangeably, but it is important to distinguish them for several reasons:
+
+\begin{enumerate}
+     \item More efficient troubleshooting. When debugging, it's essential to know if an issue lies in the event listening mechanism or the event handler.
+     \item Flexibility and modularity. Multiple event listeners can trigger the same event handler, and vice versa, a single event listener can trigger different event handlers based on certain conditions. Grasping the distinction between handlers and listeners allows for more flexible and modular coding practices.
+     \item Clarity in collaboration. It’s crucial to have clear, shared terminology at a team level. Misunderstandings can arise if one person is discussing a handler while someone else believes they’re talking about a listener.
+\end{enumerate}
+
+The event loop is used by numerous runtimes and frameworks as a sort of intermediary between event listeners and event handlers.  
+One of the main benefits of the event loop is that it enables concurrent execution and non-blocking I/O operations when you’re working with single-threaded programming languages and runtimes.  
+Here is how it works:
+
+\begin{enumerate}
+     \item Event listeners detect incoming events and place them in an event queue.
+     \item The event loop mechanism continually checks for queued events and calls the corresponding event handler for each event. \cite{quixWhatEventdriven}
+\end{enumerate}
+
+\begin{center}
+     \includegraphics[width=\linewidth]{img/event_loop_overview.png}
+\end{center}
+
+\subsection{Queues and topics}
+
+When dealing with high volumes of data and numerous producers and consumers in a distributed environment, it’s common practice to use some sort of messaging middleware to intermediate the flow of events between different components. They generally use message queues and topics to route events from producers to consumers.
+A message queue temporarily sorts events generated by producers, ensuring they are processed in a specific order by a consumer. As events occur, they are added to the back of the queue. Once a consumer processes the event, it is deleted from the queue. There can be multiple producers publishing events to a queue; however, on the consumer side, there is a single entity consuming each message (point-to-point messaging).
+A topic is a communication channel specific to publish-subscribe (pub/sub) messaging systems. Producers publish events to topics, and multiple consumers can subscribe to topics to receive events. Unlike queues, events sent to a topic can be consumed by multiple consumers, (one-to-many communication). \cite{quixWhatEventdriven}
+
+\begin{center}
+     \includegraphics[width=0.8\linewidth]{img/message_queues-topics.png}
+\end{center}
+
+\section{Implementation in different contexts}
+\label{sec:diffContexts}
+
+The implementation of event-driven programming can change significantly depending on the context in which it is used.
+In this chapter, we will explore four main contexts, each of them presents specific challenges and requires tailored approaches to maximize the benefits of this paradigm.
+We will examine how event-driven programming applies and evolves in each of these domains, providing an overview of its various implementations and crucial considerations for development.
+
+\subsection{Web development}
+
+Event-driven programming in web development is crucial for handling dynamic and responsive user interactions. 
+Developers use this technique to manage a wide range of events, such as mouse clicks, key presses, and form submissions. 
+This approach allows them to create engaging and highly dynamic user interfaces, significantly improving the overall user experience on the web.  
+In frameworks like React.js or Angular.js, EDP is used to manage data flow and user interactions. 
+They take advantage of the concept of "components" which can generate, receive, and respond to events asynchronously. 
+For example, in React.js, each component can maintain its own state and handle its events, facilitating the creation of interactive user interfaces. 
+Similarly, Angular.js uses "directives" and "observables" to manage events and user input responses, ensuring efficient event handling within web applications.
+
+\subsection{Internet of Things}
+
+Event-driven programming in the Internet of Things is used to manage interaction and data exchange between connected devices. 
+Using this approach, devices can detect and respond to events or user inputs in real-time. 
+For example, temperature sensors sending data to an alert system when a critical variation is detected. 
+This programming enables the creation of highly responsive IoT systems that adapt to environmental changes or user needs.
+
+\subsection{Videogame development}
+
+Event-oriented programming in videogame development is used to manage dynamic and responsive interactions between players and game environments. 
+This approach is revolutionary because it allows videogames to respond in real time to player inputs, such as controller movements or key actions, and to create immersive gaming experiences, also simplifying the management of game states.
+Using event management, developers can implement complex and interactive game mechanics, providing a more dynamic and satisfying gaming experience for users.
+
+\subsection{Artifical Intelligence}
+
+Event-driven programming in artificial intelligence is used to manage the logic of responding to environmental signals or user inputs. 
+This approach allows machine learning algorithms and neural networks to dynamically adapt to changes in the environment or new information received, improving the efficiency of decisions made by artificial intelligence.
+For the future, it is expected that event-driven programming in artificial intelligence will continue to evolve towards more autonomous and adaptive systems. 
+This may include the integration of reinforcement learning algorithms that continuously learn from environmental feedback, as well as the development of distributed artificial intelligence models capable of handling real-time events on a large scale.
+
+\section{Advantages and challenges}
+\label{sec:prosAndCons}
+
+EDP brings significant advantages to developers and organizations. Here are the key ones:
+
+\subsection*{Advantages}
+
+\begin{itemize}
+     \item Responsive applications: Event-driven programming allows applications to effectively respond to user input, resulting in a more dynamic and user-friendly experience. The event loop and event queue maintain the timely processing of events, ensuring that user interactions are effectively handled. \cite{studysmarterEventDriven}
+     \item Concurrency and scalability: Event-driven systems can process more than one event at a time, which allows them to deal with numerous simultaneous user interactions or system events. Events can be distributed and processed by multiple consumers in parallel. This means it’s possible to handle large volumes of events without relying on a single consumer, who could be a bottleneck that slows down the system. \cite{quixWhatEventdriven}
+     \item Modularity and maintainability: The separation of concerns in event-driven applications, through distinct event handlers and event management, promotes modularity and maintainability. Developers can focus on individual event handlers, making it simpler to comprehend, adjust, and augment the software. \cite{studysmarterEventDriven}
+     \item Real-time processing: In the context of real-time applications, EDP enables the processing of events as they occur, ensuring the continuous distribution of up-to-date information and consistent system responsiveness. \cite{studysmarterEventDriven}
+\end{itemize}
+
+\subsection*{Challenges}
+
+While EDP offers plenty of benefits, it also comes with challenges, such as:
+
+\begin{itemize}
+     \item Code complexity. Asynchronous code can be hard to understand and debug. In addition, layering multiple events and callbacks can lead to convoluted code. \cite{quixWhatEventdriven}
+     \item Testing is non-trivial. Emulating real-world event sequences for testing can be difficult. \cite{quixWhatEventdriven}
+     \item Ordering issues. Events may not always execute in the desired order. Race conditions can cause unpredictable results, data corruption, and system instability. \cite{quixWhatEventdriven}
+\end{itemize}
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+Event-driven programming offers a dynamic approach to software development, allowing applications to respond in real-time to external events.
+As technology advances, it is expected to play an increasingly pivotal role in various domains.
+Embracing its principles not only enables developers to create responsive applications but also encourages innovation and adaptability in an ever-evolving technological landscape.
+
+\bibliographystyle{plain}
+\bibliography{bibliography}
+
+\end{document}

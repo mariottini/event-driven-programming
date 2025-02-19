@@ -1,0 +1,28 @@
+\begin{thebibliography}{1}
+
+\bibitem{adservioEventDrivenArchitecture}
+aservio.fr.
+\newblock {E}vent-{D}riven {A}rchitecture --- adservio.fr.
+\newblock \url{https://www.adservio.fr/post/event-driven-architecture}, 2022.
+
+\bibitem{EventdrivenProgramming}
+Miladev95.
+\newblock {E}vent-driven programming --- miladev95.
+\newblock \url{https://medium.com/@miladev95/event-driven-programming-cbd3ed8ec2ca}, 2023.
+
+\bibitem{quixWhatEventdriven}
+Tomáš Neubauer.
+\newblock {T}he what, why and how of event-driven programming --- quix.io.
+\newblock \url{https://quix.io/blog/what-why-how-of-event-driven-programming}, 2023.
+
+\bibitem{studysmarterEventDriven}
+StudySmarter.co.uk.
+\newblock {E}vent {D}riven {P}rogramming: {E}xamples, {A}dvantages \&amp; {F}eatures --- studysmarter.co.uk.
+\newblock \url{https://www.studysmarter.co.uk/explanations/computer-science/computer-programming/event-driven-programming/}.
+
+\bibitem{studysmarterProgrammingParadigms}
+StudySmarter.co.uk.
+\newblock {P}rogramming {P}aradigms: {M}eaning \&amp; {E}xamples | {S}tudy{S}marter --- studysmarter.co.uk.
+\newblock \url{https://www.studysmarter.co.uk/explanations/computer-science/computer-programming/programming-paradigms/}.
+
+\end{thebibliography}
